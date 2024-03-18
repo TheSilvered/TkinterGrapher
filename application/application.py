@@ -58,14 +58,14 @@ class Application:
             self.graph_canvas.x_canvas_to_x_plane(event.x),
             self.graph_canvas.y_canvas_to_y_plane(event.y)
         )
-        self.initial_x_range = self.graph_canvas.x_range()
-        self.initial_y_range = self.graph_canvas.y_range()
+        self.initial_x_range = self.graph_canvas.x_range
+        self.initial_y_range = self.graph_canvas.y_range
 
     def handle_motion(self, event):
         if None in (self.initial_cart, self.initial_x_range, self.initial_y_range):
             return
-        self.graph_canvas.set_x_range(self.initial_x_range)
-        self.graph_canvas.set_y_range(self.initial_y_range)
+        self.graph_canvas.x_range = self.initial_x_range
+        self.graph_canvas.y_range = self.initial_y_range
 
         x_cart = self.graph_canvas.x_canvas_to_x_plane(event.x)
         y_cart = self.graph_canvas.y_canvas_to_y_plane(event.y)
@@ -73,8 +73,8 @@ class Application:
         diff_x = self.initial_cart[0] - x_cart
         diff_y = y_cart - self.initial_cart[1]
 
-        self.graph_canvas.set_x_range((self.initial_x_range[0] + diff_x, self.initial_x_range[1] + diff_x))
-        self.graph_canvas.set_y_range((self.initial_y_range[0] + diff_y, self.initial_y_range[1] + diff_y))
+        self.graph_canvas.x_range = self.initial_x_range[0] + diff_x, self.initial_x_range[1] + diff_x
+        self.graph_canvas.y_range = self.initial_y_range[0] + diff_y, self.initial_y_range[1] + diff_y
 
         self.redraw_canvas()
 
