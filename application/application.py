@@ -15,6 +15,7 @@ class Application:
         self.graphers = []
 
         self.root = tk.Tk()
+        self.root.title("Tkinter Grapher")
         self.__build_gui()
         self.redraw_canvas()
 

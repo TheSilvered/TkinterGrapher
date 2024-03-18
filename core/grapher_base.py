@@ -36,7 +36,7 @@ class FunctionGraph(GrapherBase, ABC):
         values = (self.params[name] for name in arg_names)
         kwargs = dict(zip(arg_names, values))
 
-        for x_canvas in range(*self.graph_canvas.canvas_x_range()):
+        for x_canvas in range(*self.graph_canvas.canvas_x_range):
             x = self.graph_canvas.x_canvas_to_x_plane(x_canvas)
             y = self.__func(x, **kwargs)
             y_canvas = self.graph_canvas.y_plane_to_y_canvas(y)

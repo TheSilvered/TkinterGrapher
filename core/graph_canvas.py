@@ -5,6 +5,10 @@ from math import floor, ceil
 
 
 class GraphCanvasBase(ABC):
+    def __init__(self):
+        self._x_range = (-10, 10)
+        self._y_range = (-10, 10)
+
     @abstractmethod
     def width(self) -> int:
         pass
@@ -13,28 +17,30 @@ class GraphCanvasBase(ABC):
     def height(self) -> int:
         pass
 
-    @abstractmethod
+    @property
     def x_range(self) -> tuple[float, float]:
-        pass
+        return self._x_range
 
-    @abstractmethod
+    @property
     def y_range(self) -> tuple[float, float]:
-        pass
+        return self._y_range
 
+    @x_range.setter
+    def x_range(self, range_: tuple[float, float] | list[float]):
+        self._x_range = tuple(range_)
+
+    @y_range.setter
+    def y_range(self, range_: tuple[float, float] | list[float]):
+        self._y_range = tuple(range_)
+
+    @property
     @abstractmethod
     def canvas_x_range(self) -> tuple[int, int]:
         pass
 
+    @property
     @abstractmethod
     def canvas_y_range(self) -> tuple[int, int]:
-        pass
-
-    @abstractmethod
-    def set_x_range(self, range_: tuple[float, float]):
-        pass
-
-    @abstractmethod
-    def set_y_range(self, range_: tuple[float, float]):
         pass
 
     @abstractmethod
@@ -66,36 +72,34 @@ class GraphCanvasBase(ABC):
         pass
 
     def x_plane_to_x_canvas(self, x):
-        min_x, max_x = self.x_range()
-        min_xc, max_xc = self.canvas_x_range()
+        min_x, max_x = self.x_range
+        min_xc, max_xc = self.canvas_x_range
         return (x - min_x) / (max_x - min_x) * (max_xc - min_xc) + min_xc
 
     def y_plane_to_y_canvas(self, y):
-        min_y, max_y = self.y_range()
-        min_yc, max_yc = self.canvas_y_range()
+        min_y, max_y = self.y_range
+        min_yc, max_yc = self.canvas_y_range
         return (y - min_y) / (max_y - min_y) * (max_yc - min_yc) + min_yc
 
     def x_canvas_to_x_plane(self, xc):
-        min_x, max_x = self.x_range()
-        min_xc, max_xc = self.canvas_x_range()
+        min_x, max_x = self.x_range
+        min_xc, max_xc = self.canvas_x_range
         return (xc - min_xc) / (max_xc - min_xc) * (max_x - min_x) + min_x
 
     def y_canvas_to_y_plane(self, yc):
-        min_y, max_y = self.y_range()
-        min_yc, max_yc = self.canvas_x_range()
+        min_y, max_y = self.y_range
+        min_yc, max_yc = self.canvas_x_range
         return (yc - min_yc) / (max_yc - min_yc) * (max_y - min_y) + min_y
 
 
 class GraphCanvas(GraphCanvasBase):
     def __init__(self, canvas: tk.Canvas):
+        super().__init__()
         self.canvas = canvas
         self.style = {
             "fill": "#DD0000",
             "width": 2
         }
-
-        self._x_range = (-10, 10)
-        self._y_range = (-10, 10)
 
     def width(self) -> int:
         return int(self.canvas.cget("width"))
@@ -103,23 +107,13 @@ class GraphCanvas(GraphCanvasBase):
     def height(self) -> int:
         return int(self.canvas.cget("height"))
 
-    def x_range(self) -> tuple[float, float]:
-        return tuple(self._x_range)
-
-    def y_range(self) -> tuple[float, float]:
-        return tuple(self._y_range)
-
+    @property
     def canvas_x_range(self) -> tuple[float, float]:
         return 0, self.width()
 
+    @property
     def canvas_y_range(self) -> tuple[float, float]:
         return self.height(), 0
-
-    def set_x_range(self, range_: tuple[float, float]):
-        self._x_range = range_
-
-    def set_y_range(self, range_: tuple[float, float]):
-        self._y_range = range_
 
     def line(self, p1: tuple[int, int], p2: tuple[int, int]):
         self.canvas.create_line(*p1, *p2, **self.style)
@@ -146,12 +140,12 @@ class GraphCanvas(GraphCanvasBase):
 
         self.canvas.create_rectangle(0, 0, w, h, width=0, fill="#FFFFFF")
 
-        min_x, max_x = self.x_range()
+        min_x, max_x = self.x_range
         for x in range(int(floor(min_x)), int(ceil(max_x))):
             x_canvas = self.x_plane_to_x_canvas(x)
             self.canvas.create_line(x_canvas, 0, x_canvas, h, fill="#DDDDDD")
 
-        min_y, max_y = self.y_range()
+        min_y, max_y = self.y_range
         for y in range(int(floor(min_y)), int(ceil(max_y))):
             y_canvas = self.y_plane_to_y_canvas(y)
             self.canvas.create_line(0, y_canvas, w, y_canvas, fill="#DDDDDD")

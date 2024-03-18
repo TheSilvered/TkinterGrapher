@@ -10,25 +10,15 @@ class TurtleCanvas(GraphCanvasBase):
     def height(self) -> int:
         return t.screensize()[1]
 
-    def x_range(self) -> tuple[float, float]:
-        return -5, 5
-
-    def y_range(self) -> tuple[float, float]:
-        return -5, 5
-
+    @property
     def canvas_x_range(self) -> tuple[int, int]:
         x = self.width() // 2
         return -x, x
 
+    @property
     def canvas_y_range(self) -> tuple[int, int]:
         y = self.height() // 2
         return -y, y
-
-    def set_x_range(self, range_: tuple[float, float]):
-        pass
-
-    def set_y_range(self, range_: tuple[float, float]):
-        pass
 
     def line(self, p1, p2):
         t.penup()
@@ -75,16 +65,16 @@ class TurtleCanvas(GraphCanvasBase):
         t.clearscreen()
 
     def draw_background(self):
-        min_xc, max_xc = self.canvas_x_range()
-        min_yc, max_yc = self.canvas_y_range()
+        min_xc, max_xc = self.canvas_x_range
+        min_yc, max_yc = self.canvas_y_range
 
         t.pencolor("#DDDDDD")
-        min_x, max_x = self.x_range()
+        min_x, max_x = self.x_range
         for x in range(int(math.floor(min_x)), int(math.ceil(max_x))):
             x_canvas = self.x_plane_to_x_canvas(x)
             self.line((x_canvas, min_yc), (x_canvas, max_yc))
 
-        min_y, max_y = self.y_range()
+        min_y, max_y = self.y_range
         for y in range(int(math.floor(min_y)), int(math.ceil(max_y))):
             y_canvas = self.y_plane_to_y_canvas(y)
             self.line((min_xc, y_canvas), (max_xc, y_canvas))
