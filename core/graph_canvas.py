@@ -1,8 +1,9 @@
 from abc import ABC, abstractmethod
+from math import floor, ceil, log, log2, log10, isclose
+
 import tkinter as tk
 from tkinter import font as tk_font
 from itertools import chain
-from math import floor, ceil
 
 
 class GraphCanvasBase(ABC):
@@ -143,19 +144,40 @@ class GraphCanvas(GraphCanvasBase):
     def clear(self):
         self.canvas.delete("all")
 
+    @staticmethod
+    def __grid_lines(min_val, max_val):
+        steps = (max_val - min_val) / 5
+        steps10 = 10**floor(log10(steps))
+        steps2 = steps10 * 2
+        steps5 = steps10 * 5
+        steps = min(steps2, steps5, steps10, key=lambda s: abs(steps - s))
+        int_min_val = (min_val // steps) * steps
+        int_max_val = (max_val // steps + 2) * steps
+        vals = [round(int_min_val, 10)]
+        int_min_val += steps
+        while int_min_val < int_max_val:
+            vals.append(round(int_min_val, 10))
+            int_min_val += steps
+        return vals
+
+    def __grid_x_lines(self):
+        return self.__grid_lines(*self.x_range)
+
+    def __grid_y_lines(self):
+        return self.__grid_lines(*self.y_range)
+
     def draw_background(self):
+        self.__grid_x_lines()
         w = self.width()
         h = self.height()
 
         self.canvas.create_rectangle(0, 0, w, h, width=0, fill="#FFFFFF")
 
-        min_x, max_x = self.x_range
-        for x in range(int(ceil(min_x)), int(ceil(max_x))):
+        for x in self.__grid_x_lines():
             x_canvas = self.x_plane_to_x_canvas(x)
             self.canvas.create_line(x_canvas, 0, x_canvas, h, fill="#DDDDDD")
 
-        min_y, max_y = self.y_range
-        for y in range(int(ceil(min_y)), int(ceil(max_y))):
+        for y in self.__grid_y_lines():
             y_canvas = self.y_plane_to_y_canvas(y)
             self.canvas.create_line(0, y_canvas, w, y_canvas, fill="#DDDDDD")
 
@@ -192,19 +214,19 @@ class GraphCanvas(GraphCanvasBase):
         font = tk_font.Font(font="TkDefaultFont")
 
         y_center = self.y_plane_to_y_canvas(0)
-        min_x, max_x = self.x_range
-        for x in range(int(floor(min_x)), int(ceil(max_x)) + 1):
+        for x in self.__grid_x_lines():
             if x == 0:
                 continue
             x_canvas = self.x_plane_to_x_canvas(x)
-            self.__draw_x_coordinate(x_canvas, y_center, font, str(x))
+            text = str(int(x)) if int(x) == x else str(x)
+            self.__draw_x_coordinate(x_canvas, y_center, font, text)
 
         x_center = self.x_plane_to_x_canvas(0)
-        min_y, max_y = self.y_range
-        for y in range(int(floor(min_y)), int(ceil(max_y)) + 1):
+        for y in self.__grid_y_lines():
             if y == 0:
                 continue
             y_canvas = self.y_plane_to_y_canvas(y)
-            self.__draw_y_coordinate(x_center, y_canvas, font, str(y))
+            text = str(int(y)) if int(y) == y else str(y)
+            self.__draw_y_coordinate(x_center, y_canvas, font, text)
 
         self.canvas.create_text(x_center - 5, y_center + 5, text="0", fill="#000000", anchor="ne")

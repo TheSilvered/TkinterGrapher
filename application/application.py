@@ -90,11 +90,11 @@ class Application:
         self.redraw_canvas()
 
     def handle_scroll(self, event):
-        if event.type == 4:  # button press, running on Linux
+        if event.type == "4":  # button press, running on Linux
             if event.num == 4:
                 step = 1
             else:
-                step = 2
+                step = -1
         elif platform.system() == "Windows":
             step = event.delta // 120
         else:
