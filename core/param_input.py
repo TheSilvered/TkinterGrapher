@@ -48,7 +48,7 @@ class ParamInput(ParamInputBase):
 
         for i, block in enumerate(blocks):
             if i % 2 == 1:
-                entry = ttk.Entry(frame, width=2)
+                entry = ttk.Entry(frame, width=4, justify="right")
                 entry.grid(row=0, column=i)
                 self._params[block] = entry
             else:

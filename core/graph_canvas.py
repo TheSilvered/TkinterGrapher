@@ -1,13 +1,14 @@
 from abc import ABC, abstractmethod
 import tkinter as tk
+from tkinter import font as tk_font
 from itertools import chain
 from math import floor, ceil
 
 
 class GraphCanvasBase(ABC):
-    def __init__(self):
-        self._x_range = (-10, 10)
-        self._y_range = (-10, 10)
+    def __init__(self, x_range=(-10, 10), y_range=(-10, 10)):
+        self._x_range = x_range
+        self._y_range = y_range
 
     @abstractmethod
     def width(self) -> int:
@@ -74,27 +75,35 @@ class GraphCanvasBase(ABC):
     def x_plane_to_x_canvas(self, x):
         min_x, max_x = self.x_range
         min_xc, max_xc = self.canvas_x_range
+        if max_x == min_x:
+            return max_x
         return (x - min_x) / (max_x - min_x) * (max_xc - min_xc) + min_xc
 
     def y_plane_to_y_canvas(self, y):
         min_y, max_y = self.y_range
         min_yc, max_yc = self.canvas_y_range
+        if max_y == min_y:
+            return max_y
         return (y - min_y) / (max_y - min_y) * (max_yc - min_yc) + min_yc
 
     def x_canvas_to_x_plane(self, xc):
         min_x, max_x = self.x_range
         min_xc, max_xc = self.canvas_x_range
+        if max_xc == min_xc:
+            return max_xc
         return (xc - min_xc) / (max_xc - min_xc) * (max_x - min_x) + min_x
 
     def y_canvas_to_y_plane(self, yc):
         min_y, max_y = self.y_range
-        min_yc, max_yc = self.canvas_x_range
+        min_yc, max_yc = self.canvas_y_range
+        if max_yc == min_yc:
+            return max_yc
         return (yc - min_yc) / (max_yc - min_yc) * (max_y - min_y) + min_y
 
 
 class GraphCanvas(GraphCanvasBase):
-    def __init__(self, canvas: tk.Canvas):
-        super().__init__()
+    def __init__(self, canvas: tk.Canvas, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.canvas = canvas
         self.style = {
             "fill": "#DD0000",
@@ -141,12 +150,12 @@ class GraphCanvas(GraphCanvasBase):
         self.canvas.create_rectangle(0, 0, w, h, width=0, fill="#FFFFFF")
 
         min_x, max_x = self.x_range
-        for x in range(int(floor(min_x)), int(ceil(max_x))):
+        for x in range(int(ceil(min_x)), int(ceil(max_x))):
             x_canvas = self.x_plane_to_x_canvas(x)
             self.canvas.create_line(x_canvas, 0, x_canvas, h, fill="#DDDDDD")
 
         min_y, max_y = self.y_range
-        for y in range(int(floor(min_y)), int(ceil(max_y))):
+        for y in range(int(ceil(min_y)), int(ceil(max_y))):
             y_canvas = self.y_plane_to_y_canvas(y)
             self.canvas.create_line(0, y_canvas, w, y_canvas, fill="#DDDDDD")
 
@@ -155,5 +164,47 @@ class GraphCanvas(GraphCanvasBase):
         self.canvas.create_line(0, y_x_line, w, y_x_line, fill="#000000", arrow=tk.LAST)
         self.canvas.create_line(x_y_line, 0, x_y_line, h, fill="#000000", arrow=tk.FIRST)
 
+    def __draw_x_coordinate(self, x, y, font, text):
+        line_height = font.metrics("linespace")
+        y += 5
+        color = "#000000"
+        if y < 5:
+            y = 5
+            color = "#888888"
+        elif y > self.height() - line_height - 5:
+            y = self.height() - line_height - 5
+            color = "#888888"
+        self.canvas.create_text(x, y, text=text, fill=color, anchor="n")
+
+    def __draw_y_coordinate(self, x, y, font, text):
+        line_width = font.measure(text)
+        x -= 5
+        color = "#000000"
+        if x > self.width() - 5:
+            x = self.width() - 5
+            color = "#888888"
+        elif x < line_width + 5:
+            x = line_width + 5
+            color = "#888888"
+        self.canvas.create_text(x, y, text=text, fill=color, anchor="e")
+
     def draw_foreground(self):
-        pass
+        font = tk_font.Font(font="TkDefaultFont")
+
+        y_center = self.y_plane_to_y_canvas(0)
+        min_x, max_x = self.x_range
+        for x in range(int(floor(min_x)), int(ceil(max_x)) + 1):
+            if x == 0:
+                continue
+            x_canvas = self.x_plane_to_x_canvas(x)
+            self.__draw_x_coordinate(x_canvas, y_center, font, str(x))
+
+        x_center = self.x_plane_to_x_canvas(0)
+        min_y, max_y = self.y_range
+        for y in range(int(floor(min_y)), int(ceil(max_y)) + 1):
+            if y == 0:
+                continue
+            y_canvas = self.y_plane_to_y_canvas(y)
+            self.__draw_y_coordinate(x_center, y_canvas, font, str(y))
+
+        self.canvas.create_text(x_center - 5, y_center + 5, text="0", fill="#000000", anchor="ne")
