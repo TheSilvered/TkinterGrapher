@@ -3,9 +3,11 @@ import platform
 import tkinter as tk
 from tkinter import ttk, colorchooser, messagebox
 from core.graph_canvas import GraphCanvas
-from function_impls.line_type_1 import LineType1
+from function_impls.lines import LineType1, LineType2
 from function_impls.sine import Sine
 from function_impls.parabola import Parabola
+from function_impls.logarithm import Logarithm
+from function_impls.roots import NthRoot, SquareRoot
 
 
 class Application:
@@ -29,8 +31,12 @@ class Application:
 
     def __register_graphers(self):
         self.grapher_types["y = mx + q"] = LineType1
+        self.grapher_types["ax + by + c = 0"] = LineType2
         self.grapher_types["y = a * sin(w(x + p)) + b"] = Sine
         self.grapher_types["y = ax^2 + bx + c"] = Parabola
+        self.grapher_types["y = a * log_n(b(x + c)) + d"] = Logarithm
+        self.grapher_types["y = a * sqrt(b(x + c)) + d"] = SquareRoot
+        self.grapher_types["y = a * rootn(b(x + c)) + d"] = NthRoot
 
     def __build_gui(self):
         self.root.grid()

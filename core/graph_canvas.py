@@ -218,7 +218,7 @@ class GraphCanvas(GraphCanvasBase):
             if x == 0:
                 continue
             x_canvas = self.x_plane_to_x_canvas(x)
-            text = str(int(x)) if int(x) == x else str(x)
+            text = str(int(x)) if int(x) == x and abs(x) < 10000 else f"{float(x): .6g}"
             self.__draw_x_coordinate(x_canvas, y_center, font, text)
 
         x_center = self.x_plane_to_x_canvas(0)
@@ -226,7 +226,7 @@ class GraphCanvas(GraphCanvasBase):
             if y == 0:
                 continue
             y_canvas = self.y_plane_to_y_canvas(y)
-            text = str(int(y)) if int(y) == y else str(y)
+            text = str(int(y)) if int(y) == y and abs(y) < 10000 else f"{float(y): .6g}"
             self.__draw_y_coordinate(x_center, y_canvas, font, text)
 
         self.canvas.create_text(x_center - 5, y_center + 5, text="0", fill="#000000", anchor="ne")

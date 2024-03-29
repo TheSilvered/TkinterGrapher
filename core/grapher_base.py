@@ -30,6 +30,7 @@ class FunctionGraph(GrapherBase, ABC):
         if not self.params.available():
             return
 
+        final_points = []
         points = []
 
         arg_names = self.params.get_names()
@@ -38,10 +39,25 @@ class FunctionGraph(GrapherBase, ABC):
 
         for x_canvas in range(*self.graph_canvas.canvas_x_range):
             x = self.graph_canvas.x_canvas_to_x_plane(x_canvas)
-            y = self.__func(x, **kwargs)
+            try:
+                y = self.__func(x, **kwargs)
+            except Exception:
+                if points:
+                    final_points.append(points)
+                points = []
+                continue
+            if not isinstance(y, float) and not isinstance(y, int):
+                if points:
+                    final_points.append(points)
+                points = []
+                continue
             y_canvas = self.graph_canvas.y_plane_to_y_canvas(y)
             points.append((x_canvas, y_canvas))
-        self.graph_canvas.lines(points)
+
+        if points:
+            final_points.append(points)
+        for p_list in final_points:
+            self.graph_canvas.lines(p_list)
 
     @abstractmethod
     def get_func(self) -> Callable:
