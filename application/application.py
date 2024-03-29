@@ -1,7 +1,7 @@
 import platform
 
 import tkinter as tk
-from tkinter import ttk
+from tkinter import ttk, colorchooser, messagebox
 from core.graph_canvas import GraphCanvas
 from function_impls.line_type_1 import LineType1
 from function_impls.sine import Sine
@@ -14,12 +14,23 @@ class Application:
         self.initial_cart: tuple | None = None
         self.initial_x_range: tuple | None = None
         self.graph_canvas = None
+        self.grapher_types = {}
         self.graphers = []
+        self.grapher_frame: tk.Widget | None = None
+
+        self.colors = ["#DD0000", "#00DD00", "#0000DD", "#DDDD00", "#00DDDD", "#DD00DD"]
+        self.color_index = 0
 
         self.root = tk.Tk()
         self.root.title("Tkinter Grapher")
+        self.__register_graphers()
         self.__build_gui()
         self.redraw_canvas()
+
+    def __register_graphers(self):
+        self.grapher_types["y = mx + q"] = LineType1
+        self.grapher_types["y = a * sin(w(x + p)) + b"] = Sine
+        self.grapher_types["y = ax^2 + bx + c"] = Parabola
 
     def __build_gui(self):
         self.root.grid()
@@ -32,37 +43,22 @@ class Application:
         frame.rowconfigure(0, weight=1)
         frame.columnconfigure(0, weight=1)
 
+        select_func = ttk.Button(frame, text="Add function", command=self.function_selection_popup)
+        select_func.grid(column=0, row=0, sticky=tk.W)
+
+        self.grapher_frame = ttk.Frame(frame)
+        self.grapher_frame.grid(column=0, row=1, sticky=tk.EW)
+
         canvas = tk.Canvas(frame, width=500, height=500)
-
-        row = 0
-        self.graph_canvas = GraphCanvas(canvas, x_range=(-5, 5), y_range=(-5, 5))
-        self.graphers = [
-            (LineType1(self.graph_canvas, self.root), "#DD0000"),
-            (Sine(self.graph_canvas, self.root), "#00DD00"),
-            (Parabola(self.graph_canvas, self.root), "#0000DD"),
-        ]
-
-        for i, (grapher, _) in enumerate(self.graphers):
-            param_widget = grapher.params.build_widget(frame)
-            param_widget.grid(column=0, row=row + i)
-            for child in param_widget.winfo_children():
-                if isinstance(child, ttk.Entry) or isinstance(child, tk.Entry):
-                    child.bind("<Return>", self.handle_return_event)
-                    child.bind("<Button-1>", self.handle_return_event)
-                    child.bind("<KeyPress>", self.handle_return_event)
-                    child.bind("<KeyRelease>", self.handle_return_event)
-        row += len(self.graphers) + 1
-
-        canvas.grid(column=0, row=row)
+        canvas.grid(column=0, row=2)
         canvas.rowconfigure(0, weight=1)
         canvas.columnconfigure(0, weight=1)
-        row += 1
-
         canvas.bind("<Button-1>", self.handle_button_press)
         canvas.bind("<B1-Motion>", self.handle_motion)
         canvas.bind("<MouseWheel>", self.handle_scroll)
         canvas.bind("<Button-4>", self.handle_scroll)
         canvas.bind("<Button-5>", self.handle_scroll)
+        self.graph_canvas = GraphCanvas(canvas, x_range=(-5, 5), y_range=(-5, 5))
 
     def handle_button_press(self, event):
         self.initial_cart = (
@@ -143,6 +139,83 @@ class Application:
             self.graph_canvas.style["fill"] = color
             grapher.graph()
         self.graph_canvas.draw_foreground()
+
+    def function_selection_popup(self):
+        popup = tk.Toplevel()
+        popup.title("New graph")
+        popup.grab_set()
+        popup.geometry("250x75")
+        popup.resizable(False, False)
+        label = ttk.Label(popup, text="Select a graph to add:")
+        label.pack()
+        combobox = ttk.Combobox(popup, values=list(self.grapher_types.keys()))
+        combobox.pack()
+        close = ttk.Button(popup, text="Ok", command=lambda: self.add_function(combobox.get(), popup))
+        close.pack()
+
+    def add_function(self, type_, popup):
+        popup.destroy()
+        if type_ not in self.grapher_types:
+            return
+        grapher_type = self.grapher_types[type_]
+        grapher = grapher_type(self.graph_canvas, self.root)
+        color = self.colors[self.color_index]
+        self.color_index += 1
+        self.color_index %= len(self.colors)
+
+        self.graphers.append([grapher, color])
+
+        param_frame = ttk.Frame(self.grapher_frame)
+        param_frame.pack(fill=tk.X)
+        param_frame.columnconfigure(0, weight=10)
+        param_frame.columnconfigure(1, weight=2)
+        param_widget = grapher.params.build_widget(param_frame)
+        param_widget.grid(row=0, column=0, sticky=tk.W)
+
+        grapher_edit_frame = ttk.Frame(param_frame)
+        grapher_edit_frame.grid(row=0, column=1, sticky=tk.E)
+
+        change_color_button = None
+        change_color_button = tk.Button(
+            grapher_edit_frame,
+            text="     ",
+            bg=color,
+            command=lambda: self.change_color(grapher, change_color_button),
+            relief=tk.GROOVE
+        )
+        change_color_button.grid(row=0, column=1, sticky=tk.E)
+
+        remove_button = ttk.Button(
+            grapher_edit_frame,
+            text="Remove",
+            command=lambda: self.remove_grapher(grapher, param_frame)
+        )
+        remove_button.grid(row=0, column=2, sticky=tk.E)
+        for child in param_widget.winfo_children():
+            if isinstance(child, ttk.Entry) or isinstance(child, tk.Entry):
+                child.bind("<Return>", self.handle_return_event)
+                child.bind("<Button-1>", self.handle_return_event)
+                child.bind("<KeyPress>", self.handle_return_event)
+                child.bind("<KeyRelease>", self.handle_return_event)
+
+    def remove_grapher(self, grapher, param_frame):
+        result = messagebox.askokcancel("Delete graph", "Are you sure you want to delete this graph?")
+        if not result:
+            return
+        del self.graphers[list(map(lambda x: x[0], self.graphers)).index(grapher)]
+        param_frame.pack_forget()
+        param_frame.destroy()
+        self.redraw_canvas()
+
+    def change_color(self, grapher, button):
+        idx = list(map(lambda x: x[0], self.graphers)).index(grapher)
+        color = self.graphers[idx][1]
+        new_color = colorchooser.askcolor(color)
+        if new_color == (None, None):
+            return
+        button.configure(bg=new_color[1])
+        self.graphers[idx][1] = new_color[1]
+        self.redraw_canvas()
 
     def run(self):
         self.root.mainloop()
