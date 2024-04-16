@@ -3,11 +3,12 @@ import turtle as t
 
 from core.turtle_canvas import TurtleCanvas
 from core.param_input import TerminalParamInput
-from core.grapher_base import FunctionGraph
+from core.grapher_base import FunctionGraphX
 
 
-class FunctionInClass(FunctionGraph):
-    def get_param_string(self) -> str:
+class FunctionInClass(FunctionGraphX):
+    @staticmethod
+    def get_param_string() -> str:
         return ""
 
     def get_func(self):
