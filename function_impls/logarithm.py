@@ -1,8 +1,8 @@
-from core.grapher_base import FunctionGraph
+from core.grapher_base import FunctionGraphX
 from math import log
 
 
-class Logarithm(FunctionGraph):
+class Logarithm(FunctionGraphX):
     @staticmethod
     def get_param_string():
         return "y = $a$log_$n$($b$(x + $c$)) + $d$"

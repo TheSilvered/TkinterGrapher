@@ -129,6 +129,8 @@ class GraphCanvas(GraphCanvasBase):
         self.canvas.create_line(*p1, *p2, **self.style)
 
     def lines(self, points: list[tuple[int, int]]):
+        if len(points) < 2:
+            return
         self.canvas.create_line(*chain(points), **self.style)
 
     def ellipse(self, p1: tuple[int, int], p2: tuple[int, int]):

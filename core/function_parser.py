@@ -265,9 +265,7 @@ class BinOpNode(FuncAST):
         elif self.op == TokenType.CARET:
             if l_value == r_value == 0:
                 return None
-            result = l_value ** r_value
-            if isinstance(result, complex):
-                return None
+            result = math.pow(l_value, r_value)
             return result
         else:
             raise NotImplementedError(f"not implemented op {TokenType.to_str(self.op)!r}")

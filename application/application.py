@@ -8,6 +8,7 @@ from function_impls.sine import Sine
 from function_impls.parabola import Parabola
 from function_impls.logarithm import Logarithm
 from function_impls.roots import NthRoot, SquareRoot
+from function_impls.user_functions import FunctionX, FunctionY
 
 
 class Application:
@@ -30,6 +31,8 @@ class Application:
         self.redraw_canvas()
 
     def __register_graphers(self):
+        self.__register_grapher(FunctionX)
+        self.__register_grapher(FunctionY)
         self.__register_grapher(LineType1)
         self.__register_grapher(LineType2)
         self.__register_grapher(Sine)
@@ -52,7 +55,7 @@ class Application:
         frame.rowconfigure(0, weight=1)
         frame.columnconfigure(0, weight=1)
 
-        select_func = ttk.Button(frame, text="Add function", command=self.function_selection_popup)
+        select_func = ttk.Button(frame, text="+",  width=3, command=self.function_selection_popup)
         select_func.grid(column=0, row=0, sticky=tk.W)
 
         self.grapher_frame = ttk.Frame(frame)

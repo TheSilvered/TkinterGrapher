@@ -1,8 +1,8 @@
-from core.grapher_base import FunctionGraph
+from core.grapher_base import FunctionGraphX
 from math import sin
 
 
-class Sine(FunctionGraph):
+class Sine(FunctionGraphX):
     @staticmethod
     def get_param_string():
         return "y = $a$sin($w$(x + $p$)) + $b$"

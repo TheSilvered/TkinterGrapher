@@ -1,7 +1,10 @@
-import tkinter as tk
-from tkinter import ttk
 from abc import ABC, abstractmethod
 from typing import Any
+
+from tkinter import ttk
+import tkinter as tk
+
+from .function_parser import parse_func, FuncAST, ParseFuncError
 
 
 class ParamInputBase(ABC):
@@ -37,7 +40,7 @@ class ParamInputBase(ABC):
 
 class ParamInput(ParamInputBase):
     def available(self) -> bool:
-        for param in self._params:
+        for param in self.get_names():
             if self[param] is None:
                 return False
         return True
@@ -88,3 +91,48 @@ class TerminalParamInput(ParamInputBase):
 
     def _extract_value(self, param_name: str, param_value: Any) -> int | float | None:
         return param_value
+
+
+class FunctionInput(ParamInputBase):
+    def __init__(self, var_name: str, window: tk.Tk):
+        param_name = var_name.removeprefix("f(").removesuffix(")")
+        super().__init__("", window)
+        self.param_name: str = param_name
+        self.parsed_string: str = ""
+        self.current_ast: FuncAST | None = None
+        self.func_entry: ttk.Entry | None = None
+
+    def __update_ast(self):
+        if self.func_entry is None:
+            return
+        if self.func_entry.get() == self.parsed_string:
+            return
+        self.parsed_string = self.func_entry.get()
+        new_ast = parse_func(self.parsed_string, self.param_name)
+        if isinstance(new_ast, ParseFuncError):
+            self.current_ast = None
+        else:
+            self.current_ast = new_ast
+
+    def available(self) -> bool:
+        if self.func_entry is None:
+            return False
+        self.__update_ast()
+        return self.current_ast is not None
+
+    def build_widget(self, parent: tk.Widget | tk.Tk) -> tk.Widget:
+        frame = ttk.Frame(parent)
+        f_label = ttk.Label(frame, text=f"f({self.param_name}) =")
+        f_label.grid(row=0, column=0)
+        self.func_entry = ttk.Entry(frame, width=59)
+        self.func_entry.grid(row=0, column=1)
+        return frame
+
+    def _extract_value(self, param_name: str, param_value: Any) -> int | float | None:
+        raise NotImplementedError("FunctionInput only supports getting values through item indexing")
+
+    def __getitem__(self, item: int | float) -> int | float | None:
+        self.__update_ast()
+        if self.current_ast is None:
+            return None
+        return self.current_ast.evaluate(item)
