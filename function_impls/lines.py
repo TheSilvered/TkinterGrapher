@@ -2,7 +2,8 @@ from core.grapher_base import GrapherBase
 
 
 class LineType1(GrapherBase):
-    def get_param_string(self):
+    @staticmethod
+    def get_param_string():
         return "y = $m$x + $q$"
 
     def graph(self):
@@ -24,7 +25,8 @@ class LineType1(GrapherBase):
 
 
 class LineType2(GrapherBase):
-    def get_param_string(self):
+    @staticmethod
+    def get_param_string():
         return "$a$x + $b$y + $c$ = 0"
 
     def graph(self):

@@ -2,7 +2,8 @@ from core.grapher_base import FunctionGraph
 
 
 class SquareRoot(FunctionGraph):
-    def get_param_string(self):
+    @staticmethod
+    def get_param_string():
         return "y = $a$sqrt($b$(x + $c$)) + $d$"
 
     def get_func(self):
@@ -14,7 +15,8 @@ class SquareRoot(FunctionGraph):
 
 
 class NthRoot(FunctionGraph):
-    def get_param_string(self):
+    @staticmethod
+    def get_param_string():
         return "y = $a$root$n$($b$(x + $c$)) + $d$"
 
     def get_func(self):

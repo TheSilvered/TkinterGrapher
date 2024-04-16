@@ -12,8 +12,9 @@ class GrapherBase(ABC):
         self.window = window
         self.params: ParamInputBase = input_cls(self.get_param_string(), window)
 
+    @staticmethod
     @abstractmethod
-    def get_param_string(self) -> str:
+    def get_param_string() -> str:
         pass
 
     @abstractmethod

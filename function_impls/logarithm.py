@@ -3,7 +3,8 @@ from math import log
 
 
 class Logarithm(FunctionGraph):
-    def get_param_string(self):
+    @staticmethod
+    def get_param_string():
         return "y = $a$log_$n$($b$(x + $c$)) + $d$"
 
     def get_func(self):

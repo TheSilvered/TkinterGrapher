@@ -30,13 +30,16 @@ class Application:
         self.redraw_canvas()
 
     def __register_graphers(self):
-        self.grapher_types["y = mx + q"] = LineType1
-        self.grapher_types["ax + by + c = 0"] = LineType2
-        self.grapher_types["y = a * sin(w(x + p)) + b"] = Sine
-        self.grapher_types["y = ax^2 + bx + c"] = Parabola
-        self.grapher_types["y = a * log_n(b(x + c)) + d"] = Logarithm
-        self.grapher_types["y = a * sqrt(b(x + c)) + d"] = SquareRoot
-        self.grapher_types["y = a * rootn(b(x + c)) + d"] = NthRoot
+        self.__register_grapher(LineType1)
+        self.__register_grapher(LineType2)
+        self.__register_grapher(Sine)
+        self.__register_grapher(Parabola)
+        self.__register_grapher(Logarithm)
+        self.__register_grapher(SquareRoot)
+        self.__register_grapher(NthRoot)
+
+    def __register_grapher(self, grapher_class):
+        self.grapher_types[grapher_class.get_param_string().replace("$", "")] = grapher_class
 
     def __build_gui(self):
         self.root.grid()

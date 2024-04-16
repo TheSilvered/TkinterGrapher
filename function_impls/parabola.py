@@ -2,7 +2,8 @@ from core.grapher_base import FunctionGraph
 
 
 class Parabola(FunctionGraph):
-    def get_param_string(self):
+    @staticmethod
+    def get_param_string():
         return "y = $a$x^2 + $b$x + $c$"
 
     def get_func(self):
