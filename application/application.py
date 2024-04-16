@@ -21,7 +21,15 @@ class Application:
         self.graphers = []
         self.grapher_frame: tk.Widget | None = None
 
-        self.colors = ["#DD0000", "#00DD00", "#0000DD", "#DDDD00", "#00DDDD", "#DD00DD"]
+        self.colors = [
+            "#F9102F",
+            "#3FD258",
+            "#3572EC",
+            "#FF7800",
+            "#00C9FF",
+            "#AD00FF",
+            "#000000"
+        ]
         self.color_index = 0
 
         self.root = tk.Tk()
@@ -147,7 +155,9 @@ class Application:
     def redraw_canvas(self):
         self.graph_canvas.clear()
         self.graph_canvas.draw_background()
-        for grapher, color in self.graphers:
+        for grapher, color, visible in self.graphers:
+            if not visible.get():
+                continue
             self.graph_canvas.style["fill"] = color
             grapher.graph()
         self.graph_canvas.draw_foreground()
@@ -175,8 +185,6 @@ class Application:
         self.color_index += 1
         self.color_index %= len(self.colors)
 
-        self.graphers.append([grapher, color])
-
         param_frame = ttk.Frame(self.grapher_frame)
         param_frame.pack(fill=tk.X)
         param_frame.columnconfigure(0, weight=10)
@@ -197,12 +205,24 @@ class Application:
         )
         change_color_button.grid(row=0, column=1, sticky=tk.E)
 
+        checkbox_var = tk.IntVar()
+        visible_button = ttk.Checkbutton(
+            grapher_edit_frame,
+            variable=checkbox_var,
+            command=self.redraw_canvas
+        )
+        visible_button.grid(row=0, column=2, sticky=tk.E, padx=2)
+        visible_button.invoke()
+
         remove_button = ttk.Button(
             grapher_edit_frame,
             text="Remove",
             command=lambda: self.remove_grapher(grapher, param_frame)
         )
-        remove_button.grid(row=0, column=2, sticky=tk.E)
+        remove_button.grid(row=0, column=3, sticky=tk.E)
+
+        self.graphers.append([grapher, color, checkbox_var])
+
         for child in param_widget.winfo_children():
             if isinstance(child, ttk.Entry) or isinstance(child, tk.Entry):
                 child.bind("<Return>", self.handle_return_event)

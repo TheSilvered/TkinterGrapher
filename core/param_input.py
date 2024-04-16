@@ -124,7 +124,7 @@ class FunctionInput(ParamInputBase):
         frame = ttk.Frame(parent)
         f_label = ttk.Label(frame, text=f"f({self.param_name}) =")
         f_label.grid(row=0, column=0)
-        self.func_entry = ttk.Entry(frame, width=59)
+        self.func_entry = ttk.Entry(frame, width=50)
         self.func_entry.grid(row=0, column=1)
         return frame
 

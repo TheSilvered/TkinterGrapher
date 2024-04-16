@@ -17,7 +17,7 @@ class SquareRoot(FunctionGraphX):
 class NthRoot(FunctionGraphX):
     @staticmethod
     def get_param_string():
-        return "y = $a$root$n$($b$(x + $c$)) + $d$"
+        return "y = $a$rt$n$($b$(x + $c$)) + $d$"
 
     def get_func(self):
         return self.f
