@@ -20,7 +20,12 @@ class TurtleCanvas(GraphCanvasBase):
         y = self.height() // 2
         return -y, y
 
+    def __set_style(self):
+        t.color(self.color)
+        t.width(self.line_width)
+
     def line(self, p1, p2):
+        self.__set_style()
         t.penup()
         t.goto(p1[0], p1[1])
         t.pendown()
@@ -28,6 +33,7 @@ class TurtleCanvas(GraphCanvasBase):
         t.penup()
 
     def lines(self, points):
+        self.__set_style()
         t.penup()
         t.goto(*points[0])
         t.pendown()
@@ -36,6 +42,7 @@ class TurtleCanvas(GraphCanvasBase):
         t.penup()
 
     def circle(self, center: tuple[int, int], radius: int):
+        self.__set_style()
         t.penup()
         t.seth(0)
         t.goto(center[0], center[1] - radius)
@@ -44,6 +51,7 @@ class TurtleCanvas(GraphCanvasBase):
         t.penup()
 
     def ellipse(self, p1: tuple[int, int], p2: tuple[int, int]):
+        self.__set_style()
         t.penup()
         a = (p2[0] - p1[0]) / 2
         b = (p2[1] - p1[1]) / 2
@@ -68,7 +76,8 @@ class TurtleCanvas(GraphCanvasBase):
         min_xc, max_xc = self.canvas_x_range
         min_yc, max_yc = self.canvas_y_range
 
-        t.pencolor("#DDDDDD")
+        prev_color = self.color
+        self.color = "#DDDDDD"
         min_x, max_x = self.x_range
         for x in range(int(math.floor(min_x)), int(math.ceil(max_x))):
             x_canvas = self.x_plane_to_x_canvas(x)
@@ -79,7 +88,7 @@ class TurtleCanvas(GraphCanvasBase):
             y_canvas = self.y_plane_to_y_canvas(y)
             self.line((min_xc, y_canvas), (max_xc, y_canvas))
 
-        t.pencolor("#000000")
+        self.color = "#000000"
 
         self.lines([
             (min_xc, min_yc),
@@ -93,6 +102,7 @@ class TurtleCanvas(GraphCanvasBase):
         x_y_line = self.x_plane_to_x_canvas(0)
         self.line((min_xc, y_x_line), (max_xc, y_x_line))
         self.line((x_y_line, min_yc), (x_y_line, max_yc))
+        self.color = prev_color
 
     def draw_foreground(self):
         pass

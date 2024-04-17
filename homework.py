@@ -29,8 +29,8 @@ def main():
     t.speed(0)
     t.showturtle()
     canvas.draw_background()
-    t.pencolor("#DD0000")
-    t.pensize(2)
+    canvas.color = "#DD0000"
+    canvas.line_width = 2
     grapher.graph()
     t.done()
 

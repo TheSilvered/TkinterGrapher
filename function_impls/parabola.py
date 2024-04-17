@@ -1,4 +1,4 @@
-from core.grapher_base import FunctionGraphX
+from core import FunctionGraphX
 
 
 class Parabola(FunctionGraphX):

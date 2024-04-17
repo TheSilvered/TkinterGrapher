@@ -1,25 +1,24 @@
 """
 Operator precedence:
 
-num_literal: (0-9)+ ['.' (0-9)+]
-one_arg_func_name: 'sin' | 'cos' | 'tan' | 'arcsin' | 'arccos' | 'arctan' | 'sqrt' | 'ln'
-base_arg_func_name: 'rt' | 'log'
-
-call_argument: '(' signed_expr ')' | implied_mul
-one_arg_func_call: one_arg_func_name call_argument
-base_arg_func_call: base_arg_func_name '_' value call_argument
-literal: num_literal | 'pi' | 'e' | 'x' | func_call
-value: literal | '(' signed_expr ')'
-signed_value: ('+' | '-')? power
-power: value ['^' value]
-signed_power: signed_value ['^' value]
-implied_mul: power [power]
-signed_implied_mul: signed_power [power]
-factor: power [('*' | '/') power]
-signed_factor: signed_power [('*' | '/') power]
-expr: factor [('+' | '-') factor]
-signed_expr: signed_factor [('+' | '-') factor]
 __root__: signed_expr
+signed_expr: signed_factor [('+' | '-') factor]
+expr: factor [('+' | '-') factor]
+signed_factor: signed_power [('*' | '/') power]
+factor: power [('*' | '/') power]
+signed_implied_mul: signed_power [power]
+implied_mul: power [power]
+signed_power: signed_value ['^' value]
+power: value ['^' value]
+signed_value: ('+' | '-')? power
+value: literal | '(' signed_expr ')'
+literal: num_literal | 'pi' | 'e' | 'x' | func_call
+base_arg_func_call: base_arg_func_name '_' value call_argument
+one_arg_func_call: one_arg_func_name call_argument
+base_arg_func_name: 'rt' | 'log'
+call_argument: '(' signed_expr ')' | implied_mul
+one_arg_func_name: 'sin' | 'cos' | 'tan' | 'arcsin' | 'arccos' | 'arctan' | 'sqrt' | 'ln'
+num_literal: (0-9)+ ['.' (0-9)+]
 """
 
 from abc import ABC, abstractmethod

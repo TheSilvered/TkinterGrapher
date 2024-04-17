@@ -1,10 +1,6 @@
 from typing import Callable
-
 import tkinter as tk
-
-from core.graph_canvas import GraphCanvas
-from core.grapher_base import FunctionGraphX, FunctionGraphY
-from core.param_input import FunctionInput
+from core import GraphCanvas, FunctionGraphX, FunctionGraphY, FunctionInput
 
 
 class FunctionX(FunctionGraphX):

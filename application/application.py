@@ -2,13 +2,17 @@ import platform
 
 import tkinter as tk
 from tkinter import ttk, colorchooser, messagebox
-from core.graph_canvas import GraphCanvas
+
+from core import GraphCanvas
 from function_impls.lines import LineType1, LineType2
-from function_impls.sine import Sine
+from function_impls.trigonometry import Sine, Cosine, Tangent
 from function_impls.parabola import Parabola
 from function_impls.logarithm import Logarithm
-from function_impls.roots import NthRoot, SquareRoot
+from function_impls.roots import NthRoot
 from function_impls.user_functions import FunctionX, FunctionY
+from function_impls.ellipse import Circle, Ellipse
+from function_impls.homographic import Homographic
+from function_impls.hyperbole import HyperboleType1, HyperboleType2
 
 
 class Application:
@@ -43,10 +47,16 @@ class Application:
         self.__register_grapher(FunctionY)
         self.__register_grapher(LineType1)
         self.__register_grapher(LineType2)
-        self.__register_grapher(Sine)
         self.__register_grapher(Parabola)
+        self.__register_grapher(Circle)
+        self.__register_grapher(Ellipse)
+        self.__register_grapher(Homographic)
+        self.__register_grapher(HyperboleType1)
+        self.__register_grapher(HyperboleType2)
+        self.__register_grapher(Sine)
+        self.__register_grapher(Cosine)
+        self.__register_grapher(Tangent)
         self.__register_grapher(Logarithm)
-        self.__register_grapher(SquareRoot)
         self.__register_grapher(NthRoot)
 
     def __register_grapher(self, grapher_class):
@@ -63,7 +73,7 @@ class Application:
         frame.rowconfigure(0, weight=1)
         frame.columnconfigure(0, weight=1)
 
-        select_func = ttk.Button(frame, text="+",  width=3, command=self.function_selection_popup)
+        select_func = ttk.Button(frame, text="+ Add Graph", command=self.function_selection_popup)
         select_func.grid(column=0, row=0, sticky=tk.W)
 
         self.grapher_frame = ttk.Frame(frame)
@@ -153,12 +163,13 @@ class Application:
         self.redraw_canvas()
 
     def redraw_canvas(self):
+        self.graph_canvas.line_width = 2
         self.graph_canvas.clear()
         self.graph_canvas.draw_background()
         for grapher, color, visible in self.graphers:
             if not visible.get():
                 continue
-            self.graph_canvas.style["fill"] = color
+            self.graph_canvas.color = color
             grapher.graph()
         self.graph_canvas.draw_foreground()
 
@@ -166,14 +177,17 @@ class Application:
         popup = tk.Toplevel()
         popup.title("New graph")
         popup.grab_set()
-        popup.geometry("250x75")
         popup.resizable(False, False)
         label = ttk.Label(popup, text="Select a graph to add:")
-        label.pack()
-        combobox = ttk.Combobox(popup, values=list(self.grapher_types.keys()))
-        combobox.pack()
-        close = ttk.Button(popup, text="Ok", command=lambda: self.add_function(combobox.get(), popup))
-        close.pack()
+        label.pack(anchor=tk.W, padx=10, pady=5)
+        combobox = ttk.Combobox(popup, values=list(self.grapher_types.keys()), width=35)
+        combobox.pack(anchor=tk.W, padx=10, pady=5)
+        ok_cancel_frame = ttk.Frame(popup)
+        ok_cancel_frame.pack(anchor=tk.E, padx=10, pady=5)
+        ok_button = ttk.Button(ok_cancel_frame, text="OK", command=lambda: self.add_function(combobox.get(), popup))
+        ok_button.grid(column=0, row=0, padx=10)
+        cancel_button = ttk.Button(ok_cancel_frame, text="Cancel", command=popup.destroy)
+        cancel_button.grid(column=1, row=0)
 
     def add_function(self, type_, popup):
         popup.destroy()
@@ -186,7 +200,7 @@ class Application:
         self.color_index %= len(self.colors)
 
         param_frame = ttk.Frame(self.grapher_frame)
-        param_frame.pack(fill=tk.X)
+        param_frame.pack(fill=tk.X, padx=10, pady=5)
         param_frame.columnconfigure(0, weight=10)
         param_frame.columnconfigure(1, weight=2)
         param_widget = grapher.params.build_widget(param_frame)

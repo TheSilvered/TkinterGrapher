@@ -10,6 +10,24 @@ class GraphCanvasBase(ABC):
     def __init__(self, x_range=(-10, 10), y_range=(-10, 10)):
         self._x_range = x_range
         self._y_range = y_range
+        self.__color = "#000000"
+        self.__line_width = 1
+
+    @property
+    def color(self):
+        return self.__color
+
+    @color.setter
+    def color(self, color):
+        self.__color = color
+
+    @property
+    def line_width(self):
+        return self.__line_width
+
+    @line_width.setter
+    def line_width(self, width):
+        self.__line_width = width
 
     @abstractmethod
     def width(self) -> int:
@@ -106,10 +124,6 @@ class GraphCanvas(GraphCanvasBase):
     def __init__(self, canvas: tk.Canvas, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.canvas = canvas
-        self.style = {
-            "fill": "#DD0000",
-            "width": 2
-        }
 
     def width(self) -> int:
         return int(self.canvas.cget("width"))
@@ -126,22 +140,22 @@ class GraphCanvas(GraphCanvasBase):
         return self.height(), 0
 
     def line(self, p1: tuple[int, int], p2: tuple[int, int]):
-        self.canvas.create_line(*p1, *p2, **self.style)
+        self.canvas.create_line(*p1, *p2, fill=self.color, width=self.line_width)
 
     def lines(self, points: list[tuple[int, int]]):
         if len(points) < 2:
             return
-        self.canvas.create_line(*chain(points), **self.style)
+        self.canvas.create_line(*chain(points), fill=self.color, width=self.line_width)
 
     def ellipse(self, p1: tuple[int, int], p2: tuple[int, int]):
-        self.canvas.create_oval(*p1, *p2, **self.style)
+        self.canvas.create_oval(*p1, *p2, outline=self.color, width=self.line_width)
 
     def circle(self, center: tuple[int, int], radius: int):
         x1 = center[0] - radius
         y1 = center[1] - radius
         x2 = center[0] + radius + 1
         y2 = center[1] + radius + 1
-        self.canvas.create_oval(x1, y1, x2, y2, **self.style)
+        self.canvas.create_oval(x1, y1, x2, y2, outline=self.color, width=self.line_width)
 
     def clear(self):
         self.canvas.delete("all")

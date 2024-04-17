@@ -1,4 +1,4 @@
-from core.grapher_base import GrapherBase
+from core import GrapherBase
 
 
 class LineType1(GrapherBase):
