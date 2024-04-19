@@ -63,7 +63,6 @@ class Application:
         self.grapher_types[grapher_class.get_param_string().replace("$", "")] = grapher_class
 
     def __build_gui(self):
-        self.root.grid()
         self.root.rowconfigure(0, weight=1)
         self.root.columnconfigure(0, weight=1)
         self.root.resizable(False, False)
