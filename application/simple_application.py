@@ -90,7 +90,7 @@ class SimpleApplication:
         bottom_row.grid(row=2, column=0, pady=5)
         bottom_row.columnconfigure(0, weight=1)
 
-        x_range_label = ttk.Label(bottom_row, text="x range: [")
+        x_range_label = ttk.Label(bottom_row, text="Range x: [")
         x_range_label.pack(side=tk.LEFT)
 
         self.min_x_entry = ttk.Entry(bottom_row, width=4, justify=tk.RIGHT)
@@ -104,7 +104,7 @@ class SimpleApplication:
         self.max_x_entry.pack(side=tk.LEFT)
         self.max_x_entry.insert(0, "5")
 
-        y_range_label = ttk.Label(bottom_row, text="]           y range: [")
+        y_range_label = ttk.Label(bottom_row, text="]           Range y: [")
         y_range_label.pack(side=tk.LEFT)
 
         self.min_y_entry = ttk.Entry(bottom_row, width=4, justify=tk.RIGHT)

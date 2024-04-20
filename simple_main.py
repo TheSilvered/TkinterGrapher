@@ -1,3 +1,4 @@
 from application import SimpleApplication
 
-SimpleApplication().run()
+app = SimpleApplication()
+app.run()
