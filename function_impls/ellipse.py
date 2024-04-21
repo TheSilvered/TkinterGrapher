@@ -1,10 +1,10 @@
-from core import GrapherBase
+from core import GrapherBase, ParamInput, InputBase
 
 
 class Circle(GrapherBase):
     @staticmethod
-    def get_param_string() -> str:
-        return "(x + $a$)^2 + (y + $b$)^2 = $r$^2"
+    def get_params() -> InputBase:
+        return ParamInput("(x + $a$)^2 + (y + $b$)^2 = $r$^2")
 
     def graph(self):
         if not self.params.available():
@@ -27,8 +27,8 @@ class Circle(GrapherBase):
 
 class Ellipse(GrapherBase):
     @staticmethod
-    def get_param_string() -> str:
-        return "(x + $c$)^2/$a$^2 + (y + $d$)^2/$b$^2 = 1"
+    def get_params() -> InputBase:
+        return ParamInput("(x + $c$)^2/$a$^2 + (y + $d$)^2/$b$^2 = 1")
 
     def graph(self):
         if not self.params.available():

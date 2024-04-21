@@ -60,7 +60,7 @@ class Application:
         self.__register_grapher(NthRoot)
 
     def __register_grapher(self, grapher_class):
-        self.grapher_types[grapher_class.get_param_string().replace("$", "")] = grapher_class
+        self.grapher_types[grapher_class.get_params().fmt.replace("$", "")] = grapher_class
 
     def __build_gui(self):
         self.root.rowconfigure(0, weight=1)
@@ -193,7 +193,7 @@ class Application:
         if type_ not in self.grapher_types:
             return
         grapher_type = self.grapher_types[type_]
-        grapher = grapher_type(self.graph_canvas, self.root)
+        grapher = grapher_type(self.graph_canvas)
         color = self.colors[self.color_index]
         self.color_index += 1
         self.color_index %= len(self.colors)

@@ -21,7 +21,7 @@ class FunctionInClass(FunctionGraphX):
 
 def main():
     canvas = TurtleCanvas()
-    grapher = FunctionInClass(canvas, None, TerminalParamInput)
+    grapher = FunctionInClass(canvas, TerminalParamInput)
     canvas.x_range = -5, 5
     canvas.y_range = -5, 5
 

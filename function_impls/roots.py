@@ -1,10 +1,10 @@
-from core import FunctionGraphX
+from core import FunctionGraphX, ParamInput, InputBase
 
 
 class NthRoot(FunctionGraphX):
     @staticmethod
-    def get_param_string():
-        return "y = rt$n$($a$ * x)"
+    def get_params() -> InputBase:
+        return ParamInput("y = rt$n$($a$ * x)")
 
     def get_func(self):
         return self.f

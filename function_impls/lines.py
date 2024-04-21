@@ -1,10 +1,10 @@
-from core import GrapherBase
+from core import GrapherBase, ParamInput, InputBase
 
 
 class LineType1(GrapherBase):
     @staticmethod
-    def get_param_string():
-        return "y = $m$x + $q$"
+    def get_params() -> InputBase:
+        return ParamInput("y = $m$x + $q$")
 
     def graph(self):
         if not self.params.available():
@@ -26,8 +26,8 @@ class LineType1(GrapherBase):
 
 class LineType2(GrapherBase):
     @staticmethod
-    def get_param_string():
-        return "$a$x + $b$y + $c$ = 0"
+    def get_params() -> InputBase:
+        return ParamInput("$a$x + $b$y + $c$ = 0")
 
     def graph(self):
         if not self.params.available():

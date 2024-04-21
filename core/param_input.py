@@ -7,17 +7,13 @@ import tkinter as tk
 from .function_parser import parse_func, FuncAST, ParseFuncError
 
 
-class ParamInputBase(ABC):
-    def __init__(self, layout: str, window: tk.Tk):
-        self.layout = layout
-        self.window = window
-        self._params: dict[str, Any] = {}
-        blocks = self.layout.split("$")
-        for i in range(1, len(blocks), 2):
-            self._params[blocks[i]] = None
+class InputBase(ABC):
+    def __init__(self, fmt: str):
+        self.fmt = fmt
 
+    @abstractmethod
     def get_names(self):
-        return tuple(self._params.keys())
+        pass
 
     @abstractmethod
     def available(self) -> bool:
@@ -28,14 +24,30 @@ class ParamInputBase(ABC):
         pass
 
     @abstractmethod
-    def _extract_value(self, param_name: str, param_value: Any) -> int | float | None:
+    def __getitem__(self, item):
         pass
+
+
+class ParamInputBase(InputBase, ABC):
+    def __init__(self, fmt: str):
+        super().__init__(fmt)
+        self._params: dict[str, Any] = {}
+        blocks = self.fmt.split("$")
+        for i in range(1, len(blocks), 2):
+            self._params[blocks[i]] = None
+
+    def get_names(self):
+        return tuple(self._params.keys())
 
     def __getitem__(self, item):
         val: Any = self._params.get(item)
         if val is None:
             return None
         return self._extract_value(item, val)
+
+    @abstractmethod
+    def _extract_value(self, param_name: str, param_value: Any) -> int | float | None:
+        pass
 
 
 class ParamInput(ParamInputBase):
@@ -46,7 +58,7 @@ class ParamInput(ParamInputBase):
         return True
 
     def build_widget(self, parent) -> tk.Widget:
-        blocks = self.layout.split("$")
+        blocks = self.fmt.split("$")
         frame = ttk.Frame(parent)
 
         for i, block in enumerate(blocks):
@@ -77,7 +89,7 @@ class TerminalParamInput(ParamInputBase):
         return True
 
     def build_widget(self, parent: tk.Widget | tk.Tk) -> tk.Widget:
-        return tk.Label(parent, text=self.layout)
+        return tk.Label(parent, text=self.fmt.replace("$", ""))
 
     @staticmethod
     def __get_val(name):
@@ -93,14 +105,17 @@ class TerminalParamInput(ParamInputBase):
         return param_value
 
 
-class FunctionInput(ParamInputBase):
-    def __init__(self, var_name: str, window: tk.Tk):
+class FunctionInput(InputBase):
+    def __init__(self, var_name: str):
+        super().__init__(var_name)
         param_name = var_name.removeprefix("f(").removesuffix(")")
-        super().__init__("", window)
         self.param_name: str = param_name
         self.parsed_string: str = ""
         self.current_ast: FuncAST | None = None
         self.func_entry: ttk.Entry | None = None
+
+    def get_names(self):
+        return []
 
     def __update_ast(self):
         if self.func_entry is None:
@@ -127,9 +142,6 @@ class FunctionInput(ParamInputBase):
         self.func_entry = ttk.Entry(frame, width=50)
         self.func_entry.grid(row=0, column=1)
         return frame
-
-    def _extract_value(self, param_name: str, param_value: Any) -> int | float | None:
-        raise NotImplementedError("FunctionInput only supports getting values through item indexing")
 
     def __getitem__(self, item: int | float) -> int | float | None:
         self.__update_ast()

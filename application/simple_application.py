@@ -168,7 +168,7 @@ class SimpleApplication:
         self.x_entry = None
         self.x_label = None
 
-        self.grapher = grapher_type(self.graph_canvas, self.root)
+        self.grapher = grapher_type(self.graph_canvas)
         if isinstance(self.grapher.params, FunctionInput):
             self.grapher_param_widget = ttk.Frame(self.grapher_frame)
             param_w = self.grapher.params.build_widget(self.grapher_param_widget)

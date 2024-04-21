@@ -2,19 +2,17 @@ from abc import ABC, abstractmethod
 from typing import Callable
 
 from .graph_canvas import GraphCanvasBase
-from .param_input import ParamInputBase, ParamInput
-from tkinter import Tk
+from .param_input import InputBase
 
 
 class GrapherBase(ABC):
-    def __init__(self, graph_canvas: GraphCanvasBase, window: Tk | None, input_cls: type = ParamInput) -> None:
+    def __init__(self, graph_canvas: GraphCanvasBase) -> None:
         self.graph_canvas = graph_canvas
-        self.window = window
-        self.params: ParamInputBase = input_cls(self.get_param_string(), window)
+        self.params: InputBase = self.get_params()
 
     @staticmethod
     @abstractmethod
-    def get_param_string() -> str:
+    def get_params() -> InputBase:
         pass
 
     @abstractmethod
@@ -23,8 +21,8 @@ class GrapherBase(ABC):
 
 
 class FunctionGraphX(GrapherBase, ABC):
-    def __init__(self, graph_canvas: GraphCanvasBase, window: Tk | None, input_cls: type = ParamInput):
-        super().__init__(graph_canvas, window, input_cls)
+    def __init__(self, graph_canvas: GraphCanvasBase):
+        super().__init__(graph_canvas)
         self.__func = self.get_func()
 
     def __clamp_line(self, p1, p2):
@@ -101,8 +99,8 @@ class FunctionGraphX(GrapherBase, ABC):
 
 
 class FunctionGraphY(GrapherBase, ABC):
-    def __init__(self, graph_canvas: GraphCanvasBase, window: Tk | None, input_cls: type = ParamInput):
-        super().__init__(graph_canvas, window, input_cls)
+    def __init__(self, graph_canvas: GraphCanvasBase):
+        super().__init__(graph_canvas)
         self.__func = self.get_func()
 
     def __clamp_line(self, p1, p2):

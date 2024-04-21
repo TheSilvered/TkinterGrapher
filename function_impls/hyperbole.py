@@ -1,12 +1,12 @@
 from math import sqrt
 
-from core import GrapherBase
+from core import GrapherBase, ParamInput, InputBase
 
 
 class HyperboleType1(GrapherBase):
     @staticmethod
-    def get_param_string() -> str:
-        return "(x + $c$)^2/$a$^2 - (y + $d$)^2/$b$^2 = 1"
+    def get_params() -> InputBase:
+        return ParamInput("(x + $c$)^2/$a$^2 - (y + $d$)^2/$b$^2 = 1")
 
     def graph(self):
         if not self.params.available():
@@ -44,8 +44,8 @@ class HyperboleType1(GrapherBase):
 
 class HyperboleType2(GrapherBase):
     @staticmethod
-    def get_param_string() -> str:
-        return "(x + $c$)^2/$a$^2 - (y + $d$)^2/$b$^2 = -1"
+    def get_params() -> InputBase:
+        return ParamInput("(x + $c$)^2/$a$^2 - (y + $d$)^2/$b$^2 = -1")
 
     def graph(self):
         if not self.params.available():

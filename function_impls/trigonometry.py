@@ -1,11 +1,11 @@
-from core import FunctionGraphX
+from core import FunctionGraphX, ParamInput, InputBase
 from math import sin, cos, tan
 
 
 class Sine(FunctionGraphX):
     @staticmethod
-    def get_param_string():
-        return "y = $a$ * sin($w$ * x)"
+    def get_params() -> InputBase:
+        return ParamInput("y = $a$ * sin($w$ * x)")
 
     def get_func(self):
         return self.f
@@ -17,8 +17,8 @@ class Sine(FunctionGraphX):
 
 class Cosine(FunctionGraphX):
     @staticmethod
-    def get_param_string():
-        return "y = $a$ * cos($w$ * x)"
+    def get_params() -> InputBase:
+        return ParamInput("y = $a$ * cos($w$ * x)")
 
     def get_func(self):
         return self.f
@@ -30,8 +30,8 @@ class Cosine(FunctionGraphX):
 
 class Tangent(FunctionGraphX):
     @staticmethod
-    def get_param_string():
-        return "y = $a$ * tan($w$ * x)"
+    def get_params() -> InputBase:
+        return ParamInput("y = $a$ * tan($w$ * x)")
 
     def get_func(self):
         return self.f

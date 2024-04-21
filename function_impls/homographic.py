@@ -1,10 +1,10 @@
-from core import GrapherBase
+from core import GrapherBase, ParamInput, InputBase
 
 
 class Homographic(GrapherBase):
     @staticmethod
-    def get_param_string() -> str:
-        return "y = ($a$x + $b$) / ($c$x + $d$)"
+    def get_params() -> InputBase:
+        return ParamInput("y = ($a$x + $b$) / ($c$x + $d$)")
 
     def __correct_asymptote(self, points_before, points_after, asymptote):
         asymptote_canvas = self.graph_canvas.x_plane_to_x_canvas(asymptote)
